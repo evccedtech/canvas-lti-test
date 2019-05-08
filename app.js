@@ -7,6 +7,8 @@ const path = require('path');
 
 const app = express();
 
+let ltiDetails = null;
+
 // Required for Heroku deployment -- otherwise will use http rather than https?
 app.enable('trust proxy');
 
@@ -45,7 +47,8 @@ app.post('/lti_launch', function(req, res, next) {
                 // Valid launch
                 else {
                     
-                    res.status(200).send(req.body);
+                    ltiDetails = req.body;
+                    res.redirect('/login');
                     
                 }
             }
@@ -57,6 +60,16 @@ app.post('/lti_launch', function(req, res, next) {
     // LTI Key doesn't match
     else {
         res.status(403).send({ error: 'Invalid LTI key. Contact your Canvas administrator for assistance.' })
+    }
+    
+});
+
+app.get('/login', async function(req, res, next) {
+    
+    if (ltiDetails === null) {
+        res.status(403).send({ error: 'This page can only be accessed following a valid LTI launch.' });
+    } else {
+        res.send(JSON.stringify(ltiDetails));
     }
     
 });
