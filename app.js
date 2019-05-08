@@ -45,7 +45,7 @@ app.post('/lti_launch', function(req, res, next) {
                 // Valid launch
                 else {
                     
-                    res.status(200).send(res.body);
+                    res.status(200).send(req.body);
                     
                 }
             }
